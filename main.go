@@ -1,15 +1,16 @@
 package main
 
 import (
-	"context"
 	"log"
-	"os/signal"
 	"sync"
-	"syscall"
+	"time"
 
 	"github.com/choffmann/external-dns-porkbun-webhook/config"
-	"github.com/choffmann/external-dns-porkbun-webhook/internal/server/http"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/service/domain"
+	"github.com/choffmann/external-dns-porkbun-webhook/internal/storage/api"
+
+	"sigs.k8s.io/external-dns/provider"
+	externalDNSApi "sigs.k8s.io/external-dns/provider/webhook/api"
 )
 
 func main() {
@@ -18,19 +19,16 @@ func main() {
 		log.Fatalf("Error getting config: %v", err)
 	}
 
-	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer cancel()
-
-	service := domain.NewService()
-	httpServer := http.NewServer(cfg, service)
+	repo := api.NewRepository(cfg)
+	prov := domain.NewProvider(cfg, repo)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	go func() {
+	go func(prov provider.Provider) {
 		defer wg.Done()
-		httpServer.Run(ctx)
-	}()
+		externalDNSApi.StartHTTPApi(prov, nil, 1*time.Second, 1*time.Second, "5000")
+	}(prov.PorkbunProvider)
 
 	wg.Wait()
 }
