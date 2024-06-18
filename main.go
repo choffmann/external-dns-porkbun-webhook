@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"os/signal"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/choffmann/external-dns-porkbun-webhook/config"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/entities"
+	"github.com/choffmann/external-dns-porkbun-webhook/internal/entities/porkbun"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/logger"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/server/http"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/service/domain"
@@ -22,17 +24,22 @@ func main() {
 		log.Fatalf("Error getting config: %v", err)
 	}
 
-	lgg, err := logger.GetLogger(cfg.LogFormat)
+	lgg, err := logger.CreateLogger(cfg.LogFormat, cfg.LogLevel)
 	if err != nil {
 		log.Fatalf("Error creating logger: %v", err)
 	}
 
 	slog.SetDefault(lgg)
-	_ = slog.SetLogLoggerLevel(cfg.LogLevel.ToSLog())
+  fmt.Println(cfg.LogLevel, cfg.LogLevel.ToSLog())
 
 	slog.Info("Starting external-dns porkbun webhook")
 
-	repo := api.NewRepository(cfg)
+	repo, err := api.NewRepository(cfg)
+  if err != nil {
+    slog.Error("could not create Repository", slog.String("error", err.Error()))
+    panic(err)
+  }
+
 	prov := domain.NewProvider(cfg, repo)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)

@@ -36,9 +36,12 @@ func (l LogLevel) ToSLog() slog.Level {
 	}
 }
 
-func GetLogger(logFmt LogFormat) (*slog.Logger, error) {
+func CreateLogger(logFmt LogFormat, logLevel LogLevel) (*slog.Logger, error) {
 	var w io.Writer = os.Stdout
-	var options *slog.HandlerOptions
+	options := &slog.HandlerOptions{
+		AddSource: true,
+		Level:     logLevel.ToSLog(),
+	}
 
 	var handler slog.Handler
 	switch logFmt {
