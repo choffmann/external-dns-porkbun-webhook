@@ -11,7 +11,6 @@ import (
 
 	"github.com/choffmann/external-dns-porkbun-webhook/config"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/entities"
-	"github.com/choffmann/external-dns-porkbun-webhook/internal/entities/porkbun"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/logger"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/server/http"
 	"github.com/choffmann/external-dns-porkbun-webhook/internal/service/domain"
@@ -30,15 +29,15 @@ func main() {
 	}
 
 	slog.SetDefault(lgg)
-  fmt.Println(cfg.LogLevel, cfg.LogLevel.ToSLog())
+	fmt.Println(cfg.LogLevel, cfg.LogLevel.ToSLog())
 
 	slog.Info("Starting external-dns porkbun webhook")
 
 	repo, err := api.NewRepository(cfg)
-  if err != nil {
-    slog.Error("could not create Repository", slog.String("error", err.Error()))
-    panic(err)
-  }
+	if err != nil {
+		slog.Error("could not create Repository", slog.String("error", err.Error()))
+		panic(err)
+	}
 
 	prov := domain.NewProvider(cfg, repo)
 
@@ -71,8 +70,8 @@ func main() {
 	if !started {
 		slog.Error("Server could not be started")
 		cancel()
-    wg.Wait()
-    return
+		wg.Wait()
+		return
 	}
 
 	healthStatus.SetReady(true)

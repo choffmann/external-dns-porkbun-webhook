@@ -13,15 +13,27 @@ type ServerConfig struct {
 	WriteTimeout time.Duration `env:"WRITE_TIMEOUT" envDefault:"60s"`
 }
 
+type PorkbunConfig struct {
+	ApiKey    string `env:"API_KEY"`
+	ApiSecret string `env:"API_SECRET"`
+}
+
+type ExternalDnsDomainConfig struct {
+	DomainFilter         []string `env:"DOMAIN_FILTER" default:""`
+	ExcludeDomains       []string `env:"EXCLUDE_DOMAIN_FILTER" default:""`
+	RegexDomainFilter    string   `env:"REGEXP_DOMAIN_FILTER" default:""`
+	RegexDomainExclusion string   `env:"REGEXP_DOMAIN_FILTER_EXCLUSION" default:""`
+}
+
 type Config struct {
-	LogLevel    logger.LogLevel  `env:"LOG_LEVEL" envDefault:"info"`
-	LogFormat   logger.LogFormat `env:"LOG_FORMAT" envDefault:"text"`
-	ApiKey      string           `env:"PORKBUN_API_KEY"`
-	ApiSecret   string           `env:"PORKBUN_API_SECRET"`
-	Health      ServerConfig     `envPrefix:"HEALTH"`
-	HealthPort  int              `env:"HEALTH_PORT" envDefault:"8080"`
-	Webhook     ServerConfig     `envPrefix:"WEBHOOK"`
-	WebhookPort int              `env:"WEBHOOK_PORT" envDefault:"8888"`
+	LogLevel     logger.LogLevel  `env:"LOG_LEVEL" envDefault:"info"`
+	LogFormat    logger.LogFormat `env:"LOG_FORMAT" envDefault:"text"`
+	Health       ServerConfig     `envPrefix:"HEALTH_"`
+	HealthPort   int              `env:"HEALTH_PORT" envDefault:"8080"`
+	Webhook      ServerConfig     `envPrefix:"WEBHOOK_"`
+	WebhookPort  int              `env:"WEBHOOK_PORT" envDefault:"8888"`
+	Porkbun      PorkbunConfig    `envPrefix:"PORKBUN_"`
+	DomainConfig ExternalDnsDomainConfig
 }
 
 func GetConfig() (*Config, error) {

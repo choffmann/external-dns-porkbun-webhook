@@ -32,8 +32,8 @@ type porkbunResponse struct {
 func NewPorkbunRepository(cfg *config.Config, client *http.Client) (*PorkbunRepository, error) {
 	repo := &PorkbunRepository{
 		cred: apiCredentials{
-			cfg.ApiKey,
-			cfg.ApiSecret,
+			cfg.Porkbun.ApiKey,
+			cfg.Porkbun.ApiSecret,
 		},
 		client: client,
 	}
