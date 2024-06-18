@@ -96,27 +96,30 @@ func mergeEndpointsByNameType(endpoints []*endpoint.Endpoint) []*endpoint.Endpoi
 		return endpoints
 	}
 
-  result := make([]*endpoint.Endpoint, 0)
-  for _, endpoints := range endpointsByNameType {
-    e := utils.Reduce(endpoints, endpoints[0], func(e *endpoint.Endpoint, acc *endpoint.Endpoint) *endpoint.Endpoint {
-      acc.Targets = append(acc.Targets, e.Targets...)
-      return acc
-    })
+	result := make([]*endpoint.Endpoint, 0)
+	for _, endpoints := range endpointsByNameType {
+		e := utils.Reduce(endpoints, endpoints[0], func(e *endpoint.Endpoint, acc *endpoint.Endpoint) *endpoint.Endpoint {
+			acc.Targets = append(acc.Targets, e.Targets...)
+			return acc
+		})
 
-    result = append(result, e)
-  }
+		result = append(result, e)
+	}
 
-  return endpoints
+	return endpoints
 }
 
 func (p *PorkbunProvider) ApplyChanges(ctx context.Context, changes *plan.Changes) error {
+	// toCreate := changes.Create
+	// toUpdate := changes.UpdateNew
+	// toDelete := changes.Delete
 	return nil
 }
 
 func (p *PorkbunProvider) AdjustEndpoints(endpoints []*endpoint.Endpoint) ([]*endpoint.Endpoint, error) {
-	return nil, nil
+	return endpoints, nil
 }
 
 func (p *PorkbunProvider) GetDomainFilter() endpoint.DomainFilter {
-	return endpoint.NewDomainFilter([]string{})
+	return p.domainFilter
 }

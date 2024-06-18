@@ -30,16 +30,16 @@ func (s *WebhookServer) Run(ctx context.Context, startedChan chan<- bool) error 
 	m.HandleFunc("/records", apiSrv.RecordsHandler)
 	m.HandleFunc("/adjustendpoints", apiSrv.AdjustEndpointsHandler)
 
-  logger := slog.NewLogLogger(slog.Default().Handler(), slog.LevelError)
+	logger := slog.NewLogLogger(slog.Default().Handler(), slog.LevelError)
 
-  addr := fmt.Sprintf("127.0.0.1:%d", s.port)
+	addr := fmt.Sprintf("127.0.0.1:%d", s.port)
 	srv := &http.Server{
-    ReadTimeout: s.cfg.ReadTimeout, 
-    WriteTimeout: s.cfg.ReadTimeout, 
-    Addr: addr, 
-    Handler: m,
-    ErrorLog: logger,
-  }
+		ReadTimeout:  s.cfg.ReadTimeout,
+		WriteTimeout: s.cfg.ReadTimeout,
+		Addr:         addr,
+		Handler:      m,
+		ErrorLog:     logger,
+	}
 
 	go func() {
 		<-ctx.Done()
@@ -48,7 +48,7 @@ func (s *WebhookServer) Run(ctx context.Context, startedChan chan<- bool) error 
 
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
-    slog.Error("server could not listen on port", slog.String("addr", addr), slog.String("err", err.Error()))
+		slog.Error("server could not listen on port", slog.String("addr", addr), slog.String("err", err.Error()))
 		startedChan <- false
 		return err
 	}

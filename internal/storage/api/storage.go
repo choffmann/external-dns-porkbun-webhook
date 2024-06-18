@@ -10,9 +10,9 @@ import (
 
 func NewRepository(cfg *config.Config) (*storage.Repository, error) {
 	porkbunRepo, err := porkbun.NewPorkbunRepository(cfg, http.DefaultClient)
-  if err != nil {
-    return nil, err
-  }
+	if err != nil {
+		return nil, err
+	}
 	return &storage.Repository{
 		Porkbun: porkbunRepo,
 	}, nil

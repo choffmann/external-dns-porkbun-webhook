@@ -23,7 +23,7 @@ func NewHealthServer(healthStatus *entities.HealthStatus, port int, serverConfig
 }
 
 func (s *HealthServer) Run(ctx context.Context) error {
-  addr := fmt.Sprintf("127.0.0.1:%d", s.port)
+	addr := fmt.Sprintf("127.0.0.1:%d", s.port)
 
 	m := http.NewServeMux()
 	m.HandleFunc("/healthz", s.healthHandler)
@@ -38,7 +38,7 @@ func (s *HealthServer) Run(ctx context.Context) error {
 
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
-    slog.Error("server could not listen on port", slog.String("addr", addr), slog.String("err", err.Error()))
+		slog.Error("server could not listen on port", slog.String("addr", addr), slog.String("err", err.Error()))
 		return err
 	}
 
